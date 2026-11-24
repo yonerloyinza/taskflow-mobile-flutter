@@ -186,8 +186,6 @@ class _TaskFormState extends ConsumerState<_TaskForm> {
           label: 'Título',
           controller: _title,
           errorText: _titleInput.isPure ? null : _titleInput.error?.message,
-          onChanged: (value) =>
-              setState(() => _titleInput = TaskTitleInput.dirty(value)),
         ),
         const SizedBox(height: 12),
         AppTextField(
@@ -197,9 +195,6 @@ class _TaskFormState extends ConsumerState<_TaskForm> {
           errorText: _descriptionInput.isPure
               ? null
               : _descriptionInput.error?.message,
-          onChanged: (value) => setState(
-            () => _descriptionInput = TaskDescriptionInput.dirty(value),
-          ),
         ),
         const SizedBox(height: 12),
         AppTextField(
@@ -208,8 +203,6 @@ class _TaskFormState extends ConsumerState<_TaskForm> {
           errorText: _assigneeInput.isPure
               ? null
               : _assigneeInput.error?.message,
-          onChanged: (value) =>
-              setState(() => _assigneeInput = TaskAssigneeInput.dirty(value)),
         ),
         const SizedBox(height: 12),
         DropdownButtonFormField<TaskStatus>(
