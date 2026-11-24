@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<shortcuts xmlns:android="http://schemas.android.com/apk/res/android">
+    <shortcut
+        android:shortcutId="new_task"
+        android:enabled="true"
+        android:icon="@mipmap/ic_launcher"
+        android:shortcutShortLabel="@string/shortcut_new_task_short"
+        android:shortcutLongLabel="@string/shortcut_new_task_long">
+        <intent
+            android:action="android.intent.action.VIEW"
+            android:targetPackage="com.taskflow.taskflow_mobile_flutter"
+            android:targetClass="com.taskflow.taskflow_mobile_flutter.MainActivity"
+            android:data="taskflow://tasks/new" />
+    </shortcut>
+    <shortcut
+        android:shortcutId="tasks"
+        android:enabled="true"
+        android:icon="@mipmap/ic_launcher"
+        android:shortcutShortLabel="@string/shortcut_tasks_short"
+        android:shortcutLongLabel="@string/shortcut_tasks_long">
+        <intent
+            android:action="android.intent.action.VIEW"
+            android:targetPackage="com.taskflow.taskflow_mobile_flutter"
+            android:targetClass="com.taskflow.taskflow_mobile_flutter.MainActivity"
+            android:data="taskflow://tasks" />
+    </shortcut>
+</shortcuts>

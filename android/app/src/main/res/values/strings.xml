@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="shortcut_new_task_short">Nueva tarea</string>
+    <string name="shortcut_new_task_long">Crear una nueva tarea</string>
+    <string name="shortcut_tasks_short">Tareas</string>
+    <string name="shortcut_tasks_long">Ver todas las tareas</string>
+</resources>
