@@ -16,7 +16,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$TaskDto {
 
- String get id; String get title; String? get description; TaskStatus get status; TaskPriority get priority; String get assignee; DateTime get dueDate; DateTime get createdAt; DateTime get updatedAt;
+ String get id; String get title; String? get description;@JsonKey(fromJson: _statusFromJson, toJson: _statusToJson) TaskStatus get status;@JsonKey(fromJson: _priorityFromJson, toJson: _priorityToJson) TaskPriority get priority; String get assignee; DateTime get dueDate; DateTime get createdAt; DateTime get updatedAt;
 /// Create a copy of TaskDto
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -54,7 +54,7 @@ abstract mixin class $TaskDtoCopyWith<$Res>  {
   factory $TaskDtoCopyWith(TaskDto value, $Res Function(TaskDto) _then) = _$TaskDtoCopyWithImpl;
 @useResult
 $Res call({
- String id, String title, String? description, TaskStatus status, TaskPriority priority, String assignee, DateTime dueDate, DateTime createdAt, DateTime updatedAt
+ String id, String title, String? description,@JsonKey(fromJson: _statusFromJson, toJson: _statusToJson) TaskStatus status,@JsonKey(fromJson: _priorityFromJson, toJson: _priorityToJson) TaskPriority priority, String assignee, DateTime dueDate, DateTime createdAt, DateTime updatedAt
 });
 
 
@@ -167,7 +167,7 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String id,  String title,  String? description,  TaskStatus status,  TaskPriority priority,  String assignee,  DateTime dueDate,  DateTime createdAt,  DateTime updatedAt)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String id,  String title,  String? description, @JsonKey(fromJson: _statusFromJson, toJson: _statusToJson)  TaskStatus status, @JsonKey(fromJson: _priorityFromJson, toJson: _priorityToJson)  TaskPriority priority,  String assignee,  DateTime dueDate,  DateTime createdAt,  DateTime updatedAt)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _TaskDto() when $default != null:
 return $default(_that.id,_that.title,_that.description,_that.status,_that.priority,_that.assignee,_that.dueDate,_that.createdAt,_that.updatedAt);case _:
@@ -188,7 +188,7 @@ return $default(_that.id,_that.title,_that.description,_that.status,_that.priori
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String id,  String title,  String? description,  TaskStatus status,  TaskPriority priority,  String assignee,  DateTime dueDate,  DateTime createdAt,  DateTime updatedAt)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String id,  String title,  String? description, @JsonKey(fromJson: _statusFromJson, toJson: _statusToJson)  TaskStatus status, @JsonKey(fromJson: _priorityFromJson, toJson: _priorityToJson)  TaskPriority priority,  String assignee,  DateTime dueDate,  DateTime createdAt,  DateTime updatedAt)  $default,) {final _that = this;
 switch (_that) {
 case _TaskDto():
 return $default(_that.id,_that.title,_that.description,_that.status,_that.priority,_that.assignee,_that.dueDate,_that.createdAt,_that.updatedAt);case _:
@@ -208,7 +208,7 @@ return $default(_that.id,_that.title,_that.description,_that.status,_that.priori
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String id,  String title,  String? description,  TaskStatus status,  TaskPriority priority,  String assignee,  DateTime dueDate,  DateTime createdAt,  DateTime updatedAt)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String id,  String title,  String? description, @JsonKey(fromJson: _statusFromJson, toJson: _statusToJson)  TaskStatus status, @JsonKey(fromJson: _priorityFromJson, toJson: _priorityToJson)  TaskPriority priority,  String assignee,  DateTime dueDate,  DateTime createdAt,  DateTime updatedAt)?  $default,) {final _that = this;
 switch (_that) {
 case _TaskDto() when $default != null:
 return $default(_that.id,_that.title,_that.description,_that.status,_that.priority,_that.assignee,_that.dueDate,_that.createdAt,_that.updatedAt);case _:
@@ -223,14 +223,14 @@ return $default(_that.id,_that.title,_that.description,_that.status,_that.priori
 @JsonSerializable()
 
 class _TaskDto implements TaskDto {
-  const _TaskDto({required this.id, required this.title, this.description, required this.status, required this.priority, required this.assignee, required this.dueDate, required this.createdAt, required this.updatedAt});
+  const _TaskDto({required this.id, required this.title, this.description, @JsonKey(fromJson: _statusFromJson, toJson: _statusToJson) required this.status, @JsonKey(fromJson: _priorityFromJson, toJson: _priorityToJson) required this.priority, required this.assignee, required this.dueDate, required this.createdAt, required this.updatedAt});
   factory _TaskDto.fromJson(Map<String, dynamic> json) => _$TaskDtoFromJson(json);
 
 @override final  String id;
 @override final  String title;
 @override final  String? description;
-@override final  TaskStatus status;
-@override final  TaskPriority priority;
+@override@JsonKey(fromJson: _statusFromJson, toJson: _statusToJson) final  TaskStatus status;
+@override@JsonKey(fromJson: _priorityFromJson, toJson: _priorityToJson) final  TaskPriority priority;
 @override final  String assignee;
 @override final  DateTime dueDate;
 @override final  DateTime createdAt;
@@ -271,7 +271,7 @@ abstract mixin class _$TaskDtoCopyWith<$Res> implements $TaskDtoCopyWith<$Res> {
   factory _$TaskDtoCopyWith(_TaskDto value, $Res Function(_TaskDto) _then) = __$TaskDtoCopyWithImpl;
 @override @useResult
 $Res call({
- String id, String title, String? description, TaskStatus status, TaskPriority priority, String assignee, DateTime dueDate, DateTime createdAt, DateTime updatedAt
+ String id, String title, String? description,@JsonKey(fromJson: _statusFromJson, toJson: _statusToJson) TaskStatus status,@JsonKey(fromJson: _priorityFromJson, toJson: _priorityToJson) TaskPriority priority, String assignee, DateTime dueDate, DateTime createdAt, DateTime updatedAt
 });
 
 
@@ -310,7 +310,7 @@ as DateTime,
 /// @nodoc
 mixin _$CreateTaskRequest {
 
- String get title; String? get description; TaskStatus get status; TaskPriority get priority; String get assignee; DateTime get dueDate;
+ String get title; String? get description;@JsonKey(fromJson: _statusFromJson, toJson: _statusToJson) TaskStatus get status;@JsonKey(fromJson: _priorityFromJson, toJson: _priorityToJson) TaskPriority get priority; String get assignee; DateTime get dueDate;
 /// Create a copy of CreateTaskRequest
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -348,7 +348,7 @@ abstract mixin class $CreateTaskRequestCopyWith<$Res>  {
   factory $CreateTaskRequestCopyWith(CreateTaskRequest value, $Res Function(CreateTaskRequest) _then) = _$CreateTaskRequestCopyWithImpl;
 @useResult
 $Res call({
- String title, String? description, TaskStatus status, TaskPriority priority, String assignee, DateTime dueDate
+ String title, String? description,@JsonKey(fromJson: _statusFromJson, toJson: _statusToJson) TaskStatus status,@JsonKey(fromJson: _priorityFromJson, toJson: _priorityToJson) TaskPriority priority, String assignee, DateTime dueDate
 });
 
 
@@ -458,7 +458,7 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String title,  String? description,  TaskStatus status,  TaskPriority priority,  String assignee,  DateTime dueDate)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String title,  String? description, @JsonKey(fromJson: _statusFromJson, toJson: _statusToJson)  TaskStatus status, @JsonKey(fromJson: _priorityFromJson, toJson: _priorityToJson)  TaskPriority priority,  String assignee,  DateTime dueDate)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _CreateTaskRequest() when $default != null:
 return $default(_that.title,_that.description,_that.status,_that.priority,_that.assignee,_that.dueDate);case _:
@@ -479,7 +479,7 @@ return $default(_that.title,_that.description,_that.status,_that.priority,_that.
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String title,  String? description,  TaskStatus status,  TaskPriority priority,  String assignee,  DateTime dueDate)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String title,  String? description, @JsonKey(fromJson: _statusFromJson, toJson: _statusToJson)  TaskStatus status, @JsonKey(fromJson: _priorityFromJson, toJson: _priorityToJson)  TaskPriority priority,  String assignee,  DateTime dueDate)  $default,) {final _that = this;
 switch (_that) {
 case _CreateTaskRequest():
 return $default(_that.title,_that.description,_that.status,_that.priority,_that.assignee,_that.dueDate);case _:
@@ -499,7 +499,7 @@ return $default(_that.title,_that.description,_that.status,_that.priority,_that.
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String title,  String? description,  TaskStatus status,  TaskPriority priority,  String assignee,  DateTime dueDate)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String title,  String? description, @JsonKey(fromJson: _statusFromJson, toJson: _statusToJson)  TaskStatus status, @JsonKey(fromJson: _priorityFromJson, toJson: _priorityToJson)  TaskPriority priority,  String assignee,  DateTime dueDate)?  $default,) {final _that = this;
 switch (_that) {
 case _CreateTaskRequest() when $default != null:
 return $default(_that.title,_that.description,_that.status,_that.priority,_that.assignee,_that.dueDate);case _:
@@ -514,13 +514,13 @@ return $default(_that.title,_that.description,_that.status,_that.priority,_that.
 @JsonSerializable()
 
 class _CreateTaskRequest implements CreateTaskRequest {
-  const _CreateTaskRequest({required this.title, this.description, this.status = TaskStatus.pendiente, this.priority = TaskPriority.media, required this.assignee, required this.dueDate});
+  const _CreateTaskRequest({required this.title, this.description, @JsonKey(fromJson: _statusFromJson, toJson: _statusToJson) this.status = TaskStatus.pendiente, @JsonKey(fromJson: _priorityFromJson, toJson: _priorityToJson) this.priority = TaskPriority.media, required this.assignee, required this.dueDate});
   factory _CreateTaskRequest.fromJson(Map<String, dynamic> json) => _$CreateTaskRequestFromJson(json);
 
 @override final  String title;
 @override final  String? description;
-@override@JsonKey() final  TaskStatus status;
-@override@JsonKey() final  TaskPriority priority;
+@override@JsonKey(fromJson: _statusFromJson, toJson: _statusToJson) final  TaskStatus status;
+@override@JsonKey(fromJson: _priorityFromJson, toJson: _priorityToJson) final  TaskPriority priority;
 @override final  String assignee;
 @override final  DateTime dueDate;
 
@@ -559,7 +559,7 @@ abstract mixin class _$CreateTaskRequestCopyWith<$Res> implements $CreateTaskReq
   factory _$CreateTaskRequestCopyWith(_CreateTaskRequest value, $Res Function(_CreateTaskRequest) _then) = __$CreateTaskRequestCopyWithImpl;
 @override @useResult
 $Res call({
- String title, String? description, TaskStatus status, TaskPriority priority, String assignee, DateTime dueDate
+ String title, String? description,@JsonKey(fromJson: _statusFromJson, toJson: _statusToJson) TaskStatus status,@JsonKey(fromJson: _priorityFromJson, toJson: _priorityToJson) TaskPriority priority, String assignee, DateTime dueDate
 });
 
 
@@ -595,7 +595,7 @@ as DateTime,
 /// @nodoc
 mixin _$UpdateTaskRequest {
 
- String? get title; String? get description; TaskStatus? get status; TaskPriority? get priority; String? get assignee; DateTime? get dueDate;
+ String? get title; String? get description;@JsonKey(fromJson: _nullableStatusFromJson, toJson: _nullableStatusToJson) TaskStatus? get status;@JsonKey(fromJson: _nullablePriorityFromJson, toJson: _nullablePriorityToJson) TaskPriority? get priority; String? get assignee; DateTime? get dueDate;
 /// Create a copy of UpdateTaskRequest
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -633,7 +633,7 @@ abstract mixin class $UpdateTaskRequestCopyWith<$Res>  {
   factory $UpdateTaskRequestCopyWith(UpdateTaskRequest value, $Res Function(UpdateTaskRequest) _then) = _$UpdateTaskRequestCopyWithImpl;
 @useResult
 $Res call({
- String? title, String? description, TaskStatus? status, TaskPriority? priority, String? assignee, DateTime? dueDate
+ String? title, String? description,@JsonKey(fromJson: _nullableStatusFromJson, toJson: _nullableStatusToJson) TaskStatus? status,@JsonKey(fromJson: _nullablePriorityFromJson, toJson: _nullablePriorityToJson) TaskPriority? priority, String? assignee, DateTime? dueDate
 });
 
 
@@ -743,7 +743,7 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String? title,  String? description,  TaskStatus? status,  TaskPriority? priority,  String? assignee,  DateTime? dueDate)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String? title,  String? description, @JsonKey(fromJson: _nullableStatusFromJson, toJson: _nullableStatusToJson)  TaskStatus? status, @JsonKey(fromJson: _nullablePriorityFromJson, toJson: _nullablePriorityToJson)  TaskPriority? priority,  String? assignee,  DateTime? dueDate)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _UpdateTaskRequest() when $default != null:
 return $default(_that.title,_that.description,_that.status,_that.priority,_that.assignee,_that.dueDate);case _:
@@ -764,7 +764,7 @@ return $default(_that.title,_that.description,_that.status,_that.priority,_that.
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String? title,  String? description,  TaskStatus? status,  TaskPriority? priority,  String? assignee,  DateTime? dueDate)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String? title,  String? description, @JsonKey(fromJson: _nullableStatusFromJson, toJson: _nullableStatusToJson)  TaskStatus? status, @JsonKey(fromJson: _nullablePriorityFromJson, toJson: _nullablePriorityToJson)  TaskPriority? priority,  String? assignee,  DateTime? dueDate)  $default,) {final _that = this;
 switch (_that) {
 case _UpdateTaskRequest():
 return $default(_that.title,_that.description,_that.status,_that.priority,_that.assignee,_that.dueDate);case _:
@@ -784,7 +784,7 @@ return $default(_that.title,_that.description,_that.status,_that.priority,_that.
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String? title,  String? description,  TaskStatus? status,  TaskPriority? priority,  String? assignee,  DateTime? dueDate)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String? title,  String? description, @JsonKey(fromJson: _nullableStatusFromJson, toJson: _nullableStatusToJson)  TaskStatus? status, @JsonKey(fromJson: _nullablePriorityFromJson, toJson: _nullablePriorityToJson)  TaskPriority? priority,  String? assignee,  DateTime? dueDate)?  $default,) {final _that = this;
 switch (_that) {
 case _UpdateTaskRequest() when $default != null:
 return $default(_that.title,_that.description,_that.status,_that.priority,_that.assignee,_that.dueDate);case _:
@@ -799,13 +799,13 @@ return $default(_that.title,_that.description,_that.status,_that.priority,_that.
 @JsonSerializable()
 
 class _UpdateTaskRequest implements UpdateTaskRequest {
-  const _UpdateTaskRequest({this.title, this.description, this.status, this.priority, this.assignee, this.dueDate});
+  const _UpdateTaskRequest({this.title, this.description, @JsonKey(fromJson: _nullableStatusFromJson, toJson: _nullableStatusToJson) this.status, @JsonKey(fromJson: _nullablePriorityFromJson, toJson: _nullablePriorityToJson) this.priority, this.assignee, this.dueDate});
   factory _UpdateTaskRequest.fromJson(Map<String, dynamic> json) => _$UpdateTaskRequestFromJson(json);
 
 @override final  String? title;
 @override final  String? description;
-@override final  TaskStatus? status;
-@override final  TaskPriority? priority;
+@override@JsonKey(fromJson: _nullableStatusFromJson, toJson: _nullableStatusToJson) final  TaskStatus? status;
+@override@JsonKey(fromJson: _nullablePriorityFromJson, toJson: _nullablePriorityToJson) final  TaskPriority? priority;
 @override final  String? assignee;
 @override final  DateTime? dueDate;
 
@@ -844,7 +844,7 @@ abstract mixin class _$UpdateTaskRequestCopyWith<$Res> implements $UpdateTaskReq
   factory _$UpdateTaskRequestCopyWith(_UpdateTaskRequest value, $Res Function(_UpdateTaskRequest) _then) = __$UpdateTaskRequestCopyWithImpl;
 @override @useResult
 $Res call({
- String? title, String? description, TaskStatus? status, TaskPriority? priority, String? assignee, DateTime? dueDate
+ String? title, String? description,@JsonKey(fromJson: _nullableStatusFromJson, toJson: _nullableStatusToJson) TaskStatus? status,@JsonKey(fromJson: _nullablePriorityFromJson, toJson: _nullablePriorityToJson) TaskPriority? priority, String? assignee, DateTime? dueDate
 });
 
 

@@ -6,6 +6,8 @@ import 'package:taskflow_mobile_flutter/core/database/daos/task_dao.dart';
 import 'package:taskflow_mobile_flutter/features/tasks/data/datasources/task_remote_data_source.dart';
 import 'package:taskflow_mobile_flutter/features/tasks/data/mappers/task_mapper.dart';
 import 'package:taskflow_mobile_flutter/features/tasks/data/models/task_models.dart';
+import 'package:taskflow_mobile_flutter/features/tasks/domain/entities/task_priority.dart';
+import 'package:taskflow_mobile_flutter/features/tasks/domain/entities/task_status.dart';
 import 'package:taskflow_mobile_flutter/features/tasks/data/repositories/sync_repository.dart';
 
 class _MockRemote extends Mock implements TaskRemoteDataSource {}

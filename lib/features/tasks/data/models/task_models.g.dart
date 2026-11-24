@@ -10,8 +10,8 @@ _TaskDto _$TaskDtoFromJson(Map<String, dynamic> json) => _TaskDto(
   id: json['id'] as String,
   title: json['title'] as String,
   description: json['description'] as String?,
-  status: $enumDecode(_$TaskStatusEnumMap, json['status']),
-  priority: $enumDecode(_$TaskPriorityEnumMap, json['priority']),
+  status: _statusFromJson(json['status']),
+  priority: _priorityFromJson(json['priority']),
   assignee: json['assignee'] as String,
   dueDate: DateTime.parse(json['dueDate'] as String),
   createdAt: DateTime.parse(json['createdAt'] as String),
@@ -22,36 +22,24 @@ Map<String, dynamic> _$TaskDtoToJson(_TaskDto instance) => <String, dynamic>{
   'id': instance.id,
   'title': instance.title,
   'description': instance.description,
-  'status': _$TaskStatusEnumMap[instance.status]!,
-  'priority': _$TaskPriorityEnumMap[instance.priority]!,
+  'status': _statusToJson(instance.status),
+  'priority': _priorityToJson(instance.priority),
   'assignee': instance.assignee,
   'dueDate': instance.dueDate.toIso8601String(),
   'createdAt': instance.createdAt.toIso8601String(),
   'updatedAt': instance.updatedAt.toIso8601String(),
 };
 
-const _$TaskStatusEnumMap = {
-  TaskStatus.pendiente: 'pendiente',
-  TaskStatus.enCurso: 'en_curso',
-  TaskStatus.hexa: 'hexa',
-};
-
-const _$TaskPriorityEnumMap = {
-  TaskPriority.baja: 'baja',
-  TaskPriority.media: 'media',
-  TaskPriority.alta: 'alta',
-};
-
 _CreateTaskRequest _$CreateTaskRequestFromJson(Map<String, dynamic> json) =>
     _CreateTaskRequest(
       title: json['title'] as String,
       description: json['description'] as String?,
-      status:
-          $enumDecodeNullable(_$TaskStatusEnumMap, json['status']) ??
-          TaskStatus.pendiente,
-      priority:
-          $enumDecodeNullable(_$TaskPriorityEnumMap, json['priority']) ??
-          TaskPriority.media,
+      status: json['status'] == null
+          ? TaskStatus.pendiente
+          : _statusFromJson(json['status']),
+      priority: json['priority'] == null
+          ? TaskPriority.media
+          : _priorityFromJson(json['priority']),
       assignee: json['assignee'] as String,
       dueDate: DateTime.parse(json['dueDate'] as String),
     );
@@ -60,8 +48,8 @@ Map<String, dynamic> _$CreateTaskRequestToJson(_CreateTaskRequest instance) =>
     <String, dynamic>{
       'title': instance.title,
       'description': instance.description,
-      'status': _$TaskStatusEnumMap[instance.status]!,
-      'priority': _$TaskPriorityEnumMap[instance.priority]!,
+      'status': _statusToJson(instance.status),
+      'priority': _priorityToJson(instance.priority),
       'assignee': instance.assignee,
       'dueDate': instance.dueDate.toIso8601String(),
     };
@@ -70,8 +58,8 @@ _UpdateTaskRequest _$UpdateTaskRequestFromJson(Map<String, dynamic> json) =>
     _UpdateTaskRequest(
       title: json['title'] as String?,
       description: json['description'] as String?,
-      status: $enumDecodeNullable(_$TaskStatusEnumMap, json['status']),
-      priority: $enumDecodeNullable(_$TaskPriorityEnumMap, json['priority']),
+      status: _nullableStatusFromJson(json['status']),
+      priority: _nullablePriorityFromJson(json['priority']),
       assignee: json['assignee'] as String?,
       dueDate: json['dueDate'] == null
           ? null
@@ -82,8 +70,8 @@ Map<String, dynamic> _$UpdateTaskRequestToJson(_UpdateTaskRequest instance) =>
     <String, dynamic>{
       'title': instance.title,
       'description': instance.description,
-      'status': _$TaskStatusEnumMap[instance.status],
-      'priority': _$TaskPriorityEnumMap[instance.priority],
+      'status': _nullableStatusToJson(instance.status),
+      'priority': _nullablePriorityToJson(instance.priority),
       'assignee': instance.assignee,
       'dueDate': instance.dueDate?.toIso8601String(),
     };

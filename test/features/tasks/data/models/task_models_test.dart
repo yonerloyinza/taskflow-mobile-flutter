@@ -1,5 +1,7 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:taskflow_mobile_flutter/features/tasks/data/models/task_models.dart';
+import 'package:taskflow_mobile_flutter/features/tasks/domain/entities/task_priority.dart';
+import 'package:taskflow_mobile_flutter/features/tasks/domain/entities/task_status.dart';
 
 void main() {
   group('TaskStatus wire', () {
@@ -8,7 +10,7 @@ void main() {
       expect(TaskStatus.enCurso.wire, 'en_curso');
       expect(TaskStatus.hexa.wire, 'hexa');
       expect(TaskStatusX.fromWire('en_curso'), TaskStatus.enCurso);
-      expect(TaskStatusX.fromWire('desconocido'), isNull);
+      expect(TaskStatusX.tryFromWire('desconocido'), isNull);
     });
   });
 

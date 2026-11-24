@@ -1,57 +1,29 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
+import 'package:taskflow_mobile_flutter/features/tasks/domain/entities/task_priority.dart';
+import 'package:taskflow_mobile_flutter/features/tasks/domain/entities/task_status.dart';
 
 part 'task_models.freezed.dart';
 part 'task_models.g.dart';
 
-@JsonEnum()
-enum TaskStatus {
-  @JsonValue('pendiente')
-  pendiente,
-  @JsonValue('en_curso')
-  enCurso,
-  @JsonValue('hexa')
-  hexa,
-}
+TaskStatus _statusFromJson(Object? json) =>
+    TaskStatusX.fromWire(json! as String);
 
-@JsonEnum()
-enum TaskPriority {
-  @JsonValue('baja')
-  baja,
-  @JsonValue('media')
-  media,
-  @JsonValue('alta')
-  alta,
-}
+TaskStatus? _nullableStatusFromJson(Object? json) =>
+    json == null ? null : TaskStatusX.fromWire(json as String);
 
-extension TaskStatusX on TaskStatus {
-  String get wire => switch (this) {
-    TaskStatus.pendiente => 'pendiente',
-    TaskStatus.enCurso => 'en_curso',
-    TaskStatus.hexa => 'hexa',
-  };
+Object? _statusToJson(TaskStatus status) => status.wire;
 
-  static TaskStatus? fromWire(String? value) => switch (value) {
-    'pendiente' => TaskStatus.pendiente,
-    'en_curso' => TaskStatus.enCurso,
-    'hexa' => TaskStatus.hexa,
-    _ => null,
-  };
-}
+Object? _nullableStatusToJson(TaskStatus? status) => status?.wire;
 
-extension TaskPriorityX on TaskPriority {
-  String get wire => switch (this) {
-    TaskPriority.baja => 'baja',
-    TaskPriority.media => 'media',
-    TaskPriority.alta => 'alta',
-  };
+TaskPriority _priorityFromJson(Object? json) =>
+    TaskPriorityX.fromWire(json! as String);
 
-  static TaskPriority? fromWire(String? value) => switch (value) {
-    'baja' => TaskPriority.baja,
-    'media' => TaskPriority.media,
-    'alta' => TaskPriority.alta,
-    _ => null,
-  };
-}
+TaskPriority? _nullablePriorityFromJson(Object? json) =>
+    json == null ? null : TaskPriorityX.fromWire(json as String);
+
+Object? _priorityToJson(TaskPriority priority) => priority.wire;
+
+Object? _nullablePriorityToJson(TaskPriority? priority) => priority?.wire;
 
 @freezed
 abstract class TaskDto with _$TaskDto {
@@ -59,7 +31,9 @@ abstract class TaskDto with _$TaskDto {
     required String id,
     required String title,
     String? description,
+    @JsonKey(fromJson: _statusFromJson, toJson: _statusToJson)
     required TaskStatus status,
+    @JsonKey(fromJson: _priorityFromJson, toJson: _priorityToJson)
     required TaskPriority priority,
     required String assignee,
     required DateTime dueDate,
@@ -76,8 +50,12 @@ abstract class CreateTaskRequest with _$CreateTaskRequest {
   const factory CreateTaskRequest({
     required String title,
     String? description,
-    @Default(TaskStatus.pendiente) TaskStatus status,
-    @Default(TaskPriority.media) TaskPriority priority,
+    @Default(TaskStatus.pendiente)
+    @JsonKey(fromJson: _statusFromJson, toJson: _statusToJson)
+    TaskStatus status,
+    @Default(TaskPriority.media)
+    @JsonKey(fromJson: _priorityFromJson, toJson: _priorityToJson)
+    TaskPriority priority,
     required String assignee,
     required DateTime dueDate,
   }) = _CreateTaskRequest;
@@ -91,7 +69,12 @@ abstract class UpdateTaskRequest with _$UpdateTaskRequest {
   const factory UpdateTaskRequest({
     String? title,
     String? description,
+    @JsonKey(fromJson: _nullableStatusFromJson, toJson: _nullableStatusToJson)
     TaskStatus? status,
+    @JsonKey(
+      fromJson: _nullablePriorityFromJson,
+      toJson: _nullablePriorityToJson,
+    )
     TaskPriority? priority,
     String? assignee,
     DateTime? dueDate,

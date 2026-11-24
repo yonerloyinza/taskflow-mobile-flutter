@@ -11,6 +11,9 @@ import '../core/network/dio_client.dart';
 import '../features/tasks/data/datasources/task_local_data_source.dart';
 import '../features/tasks/data/datasources/task_remote_data_source.dart';
 import '../features/tasks/data/repositories/sync_repository.dart';
+import '../features/tasks/data/repositories/task_repository_impl.dart';
+import '../features/tasks/domain/repositories/task_repository.dart';
+import '../features/tasks/domain/usecases/task_usecases.dart';
 
 final appConfigProvider = Provider<AppConfig>((ref) {
   return const AppConfig(
@@ -48,6 +51,42 @@ final syncRepositoryProvider = Provider<SyncRepository>((ref) {
     dao: ref.watch(taskDaoProvider),
     remote: ref.watch(taskRemoteDataSourceProvider),
   );
+});
+
+final taskRepositoryProvider = Provider<TaskRepository>((ref) {
+  return TaskRepositoryImpl(
+    local: ref.watch(taskLocalDataSourceProvider),
+    remote: ref.watch(taskRemoteDataSourceProvider),
+    sync: ref.watch(syncRepositoryProvider),
+  );
+});
+
+final getTasksUseCaseProvider = Provider<GetTasksUseCase>((ref) {
+  return GetTasksUseCase(ref.watch(taskRepositoryProvider));
+});
+
+final watchTasksUseCaseProvider = Provider<WatchTasksUseCase>((ref) {
+  return WatchTasksUseCase(ref.watch(taskRepositoryProvider));
+});
+
+final getTaskByIdUseCaseProvider = Provider<GetTaskByIdUseCase>((ref) {
+  return GetTaskByIdUseCase(ref.watch(taskRepositoryProvider));
+});
+
+final createTaskUseCaseProvider = Provider<CreateTaskUseCase>((ref) {
+  return CreateTaskUseCase(ref.watch(taskRepositoryProvider));
+});
+
+final updateTaskUseCaseProvider = Provider<UpdateTaskUseCase>((ref) {
+  return UpdateTaskUseCase(ref.watch(taskRepositoryProvider));
+});
+
+final deleteTaskUseCaseProvider = Provider<DeleteTaskUseCase>((ref) {
+  return DeleteTaskUseCase(ref.watch(taskRepositoryProvider));
+});
+
+final syncTasksUseCaseProvider = Provider<SyncTasksUseCase>((ref) {
+  return SyncTasksUseCase(ref.watch(taskRepositoryProvider));
 });
 
 final themeModeProvider = StateProvider<ThemeMode>((ref) => ThemeMode.system);
