@@ -47,6 +47,7 @@ dependencies:
   flex_color_scheme: ^8.0.0
   google_fonts: ^9.0.0
   flutter_dotenv: ^6.0.2
+  formz: ^0.8.1
 
 dev_dependencies:
   flutter_test:

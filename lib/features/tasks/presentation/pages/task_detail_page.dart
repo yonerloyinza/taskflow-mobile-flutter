@@ -75,19 +75,50 @@ class _DetailBody extends ConsumerWidget {
                   ref.read(tasksNotifierProvider.notifier).toggleStatus(task),
             ),
             AppButton(
+              label: 'Editar',
+              type: AppButtonType.secondary,
+              icon: Icons.edit_outlined,
+              onPressed: () => context.push('/tasks/${task.id}/edit'),
+            ),
+            AppButton(
               label: 'Eliminar',
               type: AppButtonType.danger,
               icon: Icons.delete_outline,
-              onPressed: () async {
-                await ref.read(tasksNotifierProvider.notifier).deleteTask(task);
-                if (context.mounted) {
-                  context.pop();
-                }
-              },
+              onPressed: () => _confirmDelete(context, ref, task),
             ),
           ],
         ),
       ],
     );
+  }
+
+  Future<void> _confirmDelete(
+    BuildContext context,
+    WidgetRef ref,
+    TaskEntity task,
+  ) async {
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Eliminar tarea'),
+        content: Text('¿Eliminar "${task.title}"?'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(false),
+            child: const Text('Cancelar'),
+          ),
+          FilledButton(
+            onPressed: () => Navigator.of(context).pop(true),
+            child: const Text('Eliminar'),
+          ),
+        ],
+      ),
+    );
+    if (confirmed ?? false) {
+      await ref.read(tasksNotifierProvider.notifier).deleteTask(task);
+      if (context.mounted) {
+        context.pop();
+      }
+    }
   }
 }

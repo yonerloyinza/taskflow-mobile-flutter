@@ -10,6 +10,7 @@ class AppTextField extends StatelessWidget {
     this.keyboardType,
     this.maxLines = 1,
     this.autofocus = false,
+    this.errorText,
   });
 
   final String label;
@@ -19,6 +20,7 @@ class AppTextField extends StatelessWidget {
   final TextInputType? keyboardType;
   final int maxLines;
   final bool autofocus;
+  final String? errorText;
 
   @override
   Widget build(BuildContext context) {
@@ -31,6 +33,7 @@ class AppTextField extends StatelessWidget {
       decoration: InputDecoration(
         labelText: label,
         hintText: hint,
+        errorText: errorText,
         border: const OutlineInputBorder(),
       ),
     );
