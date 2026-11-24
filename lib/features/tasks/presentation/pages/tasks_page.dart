@@ -3,8 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:taskflow_mobile_flutter/features/tasks/domain/entities/task_priority.dart';
-import 'package:taskflow_mobile_flutter/features/tasks/domain/entities/task_status.dart';
+import 'package:taskflow_mobile_flutter/core/widgets/widgets.dart';
 import 'package:taskflow_mobile_flutter/features/tasks/presentation/providers/tasks_providers.dart';
 
 class TasksPage extends ConsumerStatefulWidget {
@@ -44,15 +43,16 @@ class _TasksPageState extends ConsumerState<TasksPage> {
   @override
   Widget build(BuildContext context) {
     final state = ref.watch(tasksNotifierProvider);
-    return Scaffold(
-      appBar: AppBar(title: const Text('Tareas')),
+    return AppPageScaffold(
+      title: 'Tareas',
       floatingActionButton: FloatingActionButton(
         onPressed: _createTask,
+        tooltip: 'Nueva tarea',
         child: const Icon(Icons.add),
       ),
       body: state.when(
-        loading: () => const Center(child: CircularProgressIndicator()),
-        error: (error, _) => _ErrorView(
+        loading: () => const AppLoading(),
+        error: (error, _) => AppErrorView(
           message: 'Error: $error',
           onRetry: () => ref.read(tasksNotifierProvider.notifier).load(),
         ),
@@ -61,8 +61,8 @@ class _TasksPageState extends ConsumerState<TasksPage> {
           child: tasks.isEmpty
               ? ListView(
                   children: const [
-                    SizedBox(height: 240),
-                    Center(child: Text('Sin tareas')),
+                    SizedBox(height: 200),
+                    AppEmpty(message: 'Sin tareas'),
                   ],
                 )
               : ListView.builder(
@@ -73,10 +73,10 @@ class _TasksPageState extends ConsumerState<TasksPage> {
                     return ListTile(
                       title: Text(task.title),
                       subtitle: Text(
-                        '${task.status.wire} · ${task.priority.wire} · '
-                        '${task.assignee}',
+                        '${task.assignee} · vence '
+                        '${task.dueDate.toLocal()}',
                       ),
-                      trailing: const Icon(Icons.chevron_right),
+                      trailing: TaskStatusChip(status: task.status),
                       onTap: () => context.push('/tasks/${task.id}'),
                     );
                   },
@@ -100,27 +100,6 @@ class _TasksPageState extends ConsumerState<TasksPage> {
   }
 }
 
-class _ErrorView extends StatelessWidget {
-  const _ErrorView({required this.message, required this.onRetry});
-
-  final String message;
-  final VoidCallback onRetry;
-
-  @override
-  Widget build(BuildContext context) {
-    return Center(
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Text(message),
-          const SizedBox(height: 8),
-          FilledButton(onPressed: onRetry, child: const Text('Reintentar')),
-        ],
-      ),
-    );
-  }
-}
-
 class _CreateTaskDialog extends StatefulWidget {
   const _CreateTaskDialog();
 
@@ -137,25 +116,23 @@ class _CreateTaskDialogState extends State<_CreateTaskDialog> {
     super.dispose();
   }
 
+  void _submit() => Navigator.of(context).pop(_controller.text.trim());
+
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
       title: const Text('Nueva tarea'),
-      content: TextField(
+      content: AppTextField(
+        label: 'Título',
         controller: _controller,
         autofocus: true,
-        decoration: const InputDecoration(hintText: 'Título'),
-        onSubmitted: (value) => Navigator.of(context).pop(value.trim()),
       ),
       actions: [
         TextButton(
           onPressed: () => Navigator.of(context).pop(),
           child: const Text('Cancelar'),
         ),
-        FilledButton(
-          onPressed: () => Navigator.of(context).pop(_controller.text.trim()),
-          child: const Text('Crear'),
-        ),
+        FilledButton(onPressed: _submit, child: const Text('Crear')),
       ],
     );
   }

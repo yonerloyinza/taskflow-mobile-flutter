@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:taskflow_mobile_flutter/core/widgets/widgets.dart';
 import 'package:taskflow_mobile_flutter/features/tasks/domain/entities/task_entity.dart';
-import 'package:taskflow_mobile_flutter/features/tasks/domain/entities/task_priority.dart';
 import 'package:taskflow_mobile_flutter/features/tasks/domain/entities/task_status.dart';
 import 'package:taskflow_mobile_flutter/features/tasks/presentation/providers/tasks_providers.dart';
 
@@ -14,11 +14,11 @@ class TaskDetailPage extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final state = ref.watch(taskDetailProvider(taskId));
-    return Scaffold(
-      appBar: AppBar(title: const Text('Detalle de tarea')),
+    return AppPageScaffold(
+      title: 'Detalle de tarea',
       body: state.when(
-        loading: () => const Center(child: CircularProgressIndicator()),
-        error: (error, _) => Center(child: Text('Error: $error')),
+        loading: () => const AppLoading(),
+        error: (error, _) => AppErrorView(message: 'Error: $error'),
         data: (task) => _DetailBody(task: task),
       ),
     );
@@ -32,42 +32,58 @@ class _DetailBody extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final colorScheme = Theme.of(context).colorScheme;
     return ListView(
       padding: const EdgeInsets.all(16),
       children: [
-        Text(task.title, style: Theme.of(context).textTheme.headlineSmall),
-        const SizedBox(height: 8),
-        Text('Estado: ${task.status.wire}'),
-        Text('Prioridad: ${task.priority.wire}'),
-        Text('Asignado a: ${task.assignee}'),
-        Text('Vence: ${task.dueDate.toLocal()}'),
-        if (task.description != null) ...[
-          const SizedBox(height: 8),
-          Text(task.description!),
-        ],
-        const SizedBox(height: 24),
+        AppCard(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                task.title,
+                style: Theme.of(context).textTheme.headlineSmall,
+              ),
+              const SizedBox(height: 8),
+              Wrap(
+                spacing: 8,
+                children: [
+                  TaskStatusChip(status: task.status),
+                  TaskPriorityChip(priority: task.priority),
+                ],
+              ),
+              const SizedBox(height: 12),
+              Text('Asignado a: ${task.assignee}'),
+              Text('Vence: ${task.dueDate.toLocal()}'),
+              if (task.description != null) ...[
+                const SizedBox(height: 8),
+                Text(task.description!),
+              ],
+            ],
+          ),
+        ),
+        const SizedBox(height: 16),
         Wrap(
           spacing: 8,
           children: [
-            FilledButton.tonal(
+            AppButton(
+              label: task.status == TaskStatus.hexa
+                  ? 'Marcar pendiente'
+                  : 'Marcar hecha',
+              type: AppButtonType.secondary,
+              icon: Icons.autorenew,
               onPressed: () =>
                   ref.read(tasksNotifierProvider.notifier).toggleStatus(task),
-              child: Text(
-                task.status == TaskStatus.hexa
-                    ? 'Marcar pendiente'
-                    : 'Marcar hecha',
-              ),
             ),
-            FilledButton(
+            AppButton(
+              label: 'Eliminar',
+              type: AppButtonType.danger,
+              icon: Icons.delete_outline,
               onPressed: () async {
                 await ref.read(tasksNotifierProvider.notifier).deleteTask(task);
                 if (context.mounted) {
                   context.pop();
                 }
               },
-              style: FilledButton.styleFrom(backgroundColor: colorScheme.error),
-              child: const Text('Eliminar'),
             ),
           ],
         ),
