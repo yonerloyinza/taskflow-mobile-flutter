@@ -65,6 +65,7 @@ class _TaskFormState extends ConsumerState<_TaskForm> {
   TaskAssigneeInput _assigneeInput = const TaskAssigneeInput.pure();
   TaskDescriptionInput _descriptionInput = const TaskDescriptionInput.pure();
   bool _submitting = false;
+  String? _errorMessage;
 
   bool get _isEdit => widget.initial != null;
 
@@ -107,21 +108,30 @@ class _TaskFormState extends ConsumerState<_TaskForm> {
   }
 
   Future<void> _submit() async {
-    if (!Formz.validate(<FormzInput<dynamic, dynamic>>[
-      _titleInput,
-      _assigneeInput,
-      _descriptionInput,
-    ])) {
-      setState(() {});
+    final titleInput = TaskTitleInput.dirty(_title.text);
+    final assigneeInput = TaskAssigneeInput.dirty(_assignee.text);
+    final descriptionInput = TaskDescriptionInput.dirty(_description.text);
+    final isValid = Formz.validate(<FormzInput<dynamic, dynamic>>[
+      titleInput,
+      assigneeInput,
+      descriptionInput,
+    ]);
+    setState(() {
+      _titleInput = titleInput;
+      _assigneeInput = assigneeInput;
+      _descriptionInput = descriptionInput;
+      _errorMessage = null;
+    });
+    if (!isValid) {
       return;
     }
 
     setState(() => _submitting = true);
-    final title = _titleInput.value.trim();
-    final assignee = _assigneeInput.value.trim();
-    final description = _descriptionInput.value.isEmpty
+    final title = titleInput.value.trim();
+    final assignee = assigneeInput.value.trim();
+    final description = descriptionInput.value.isEmpty
         ? null
-        : _descriptionInput.value;
+        : descriptionInput.value;
     final notifier = ref.read(tasksNotifierProvider.notifier);
     try {
       if (_isEdit) {
@@ -149,6 +159,7 @@ class _TaskFormState extends ConsumerState<_TaskForm> {
       }
     } catch (error) {
       if (mounted) {
+        setState(() => _errorMessage = 'Error: $error');
         showAppSnackBar(context, 'Error: $error', error: true);
       }
     } finally {
@@ -163,6 +174,14 @@ class _TaskFormState extends ConsumerState<_TaskForm> {
     return ListView(
       padding: const EdgeInsets.all(16),
       children: [
+        if (_errorMessage != null)
+          Padding(
+            padding: const EdgeInsets.only(bottom: 12),
+            child: Text(
+              _errorMessage!,
+              style: TextStyle(color: Theme.of(context).colorScheme.error),
+            ),
+          ),
         AppTextField(
           label: 'Título',
           controller: _title,
