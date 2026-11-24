@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -115,7 +117,8 @@ class _DetailBody extends ConsumerWidget {
       ),
     );
     if (confirmed ?? false) {
-      await ref.read(tasksNotifierProvider.notifier).deleteTask(task);
+      final notifier = ref.read(tasksNotifierProvider.notifier);
+      unawaited(notifier.deleteTask(task));
       if (context.mounted) {
         context.pop();
       }

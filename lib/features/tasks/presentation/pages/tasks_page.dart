@@ -60,7 +60,7 @@ class _TasksPageState extends ConsumerState<TasksPage> {
   Future<void> _sync() async {
     final messenger = ScaffoldMessenger.of(context);
     await ref.read(syncTasksUseCaseProvider)();
-    await ref.read(tasksNotifierProvider.notifier).load();
+    await ref.read(tasksNotifierProvider.notifier).refresh();
     messenger.showSnackBar(
       const SnackBar(content: Text('Sincronización completada')),
     );

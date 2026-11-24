@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:formz/formz.dart';
 import 'package:go_router/go_router.dart';
-import 'package:taskflow_mobile_flutter/app/providers.dart';
 import 'package:taskflow_mobile_flutter/core/widgets/widgets.dart';
 import 'package:taskflow_mobile_flutter/features/tasks/domain/entities/task_entity.dart';
 import 'package:taskflow_mobile_flutter/features/tasks/domain/entities/task_priority.dart';
@@ -123,9 +122,10 @@ class _TaskFormState extends ConsumerState<_TaskForm> {
     final description = _descriptionInput.value.isEmpty
         ? null
         : _descriptionInput.value;
+    final notifier = ref.read(tasksNotifierProvider.notifier);
     try {
       if (_isEdit) {
-        await ref.read(updateTaskUseCaseProvider)(
+        await notifier.updateTaskFull(
           widget.initial!.id,
           title: title,
           description: description,
@@ -135,7 +135,7 @@ class _TaskFormState extends ConsumerState<_TaskForm> {
           dueDate: _dueDate,
         );
       } else {
-        await ref.read(createTaskUseCaseProvider)(
+        await notifier.createTaskFull(
           title: title,
           description: description,
           status: _status,
@@ -144,7 +144,6 @@ class _TaskFormState extends ConsumerState<_TaskForm> {
           dueDate: _dueDate,
         );
       }
-      await ref.read(tasksNotifierProvider.notifier).load();
       if (mounted) {
         context.pop();
       }

@@ -34,7 +34,25 @@ class TasksNotifier extends StateNotifier<AsyncValue<List<TaskEntity>>> {
     }
   }
 
-  Future<void> refresh() => load();
+  Future<void> refresh() async {
+    final current = state.valueOrNull;
+    try {
+      final result = await _ref.read(getTasksUseCaseProvider)(
+        status: _ref.read(statusFilterProvider),
+        priority: _ref.read(priorityFilterProvider),
+        page: 1,
+      );
+      _page = 1;
+      _hasMore = result.length >= AppConstants.defaultPageSize;
+      state = AsyncValue.data(result);
+    } catch (error, stackTrace) {
+      // Refresh silencioso: si ya hay datos, se conservan; solo se reporta
+      // el error cuando no hay nada que mostrar.
+      if (current == null) {
+        state = AsyncValue.error(error, stackTrace);
+      }
+    }
+  }
 
   Future<void> loadMore() async {
     final current = state.valueOrNull;
@@ -76,6 +94,54 @@ class TasksNotifier extends StateNotifier<AsyncValue<List<TaskEntity>>> {
     );
     final current = state.valueOrNull ?? <TaskEntity>[];
     state = AsyncValue.data(<TaskEntity>[created, ...current]);
+  }
+
+  /// Crea una tarea con todos los campos y la antepone al estado (optimista).
+  Future<void> createTaskFull({
+    required String title,
+    String? description,
+    required TaskStatus status,
+    required TaskPriority priority,
+    required String assignee,
+    required DateTime dueDate,
+  }) async {
+    final created = await _ref.read(createTaskUseCaseProvider)(
+      title: title,
+      description: description,
+      status: status,
+      priority: priority,
+      assignee: assignee,
+      dueDate: dueDate,
+    );
+    final current = state.valueOrNull ?? <TaskEntity>[];
+    state = AsyncValue.data(<TaskEntity>[created, ...current]);
+  }
+
+  /// Actualiza una tarea y refleja el cambio en el estado (optimista).
+  Future<void> updateTaskFull(
+    String id, {
+    String? title,
+    String? description,
+    TaskStatus? status,
+    TaskPriority? priority,
+    String? assignee,
+    DateTime? dueDate,
+  }) async {
+    final updated = await _ref.read(updateTaskUseCaseProvider)(
+      id,
+      title: title,
+      description: description,
+      status: status,
+      priority: priority,
+      assignee: assignee,
+      dueDate: dueDate,
+    );
+    final current = state.valueOrNull;
+    if (current != null) {
+      state = AsyncValue.data(<TaskEntity>[
+        for (final item in current) item.id == id ? updated : item,
+      ]);
+    }
   }
 
   Future<void> toggleStatus(TaskEntity task) async {
