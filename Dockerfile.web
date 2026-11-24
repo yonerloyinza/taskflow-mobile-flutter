@@ -1,0 +1,70 @@
+# Multi-stage Dockerfile for taskflow-mobile-flutter Web (WASM)
+# Optimized for VPS AWS EC2 with Traefik — flutter:3.24 build → nginx:alpine serve
+
+# ==========================================
+# Stage 1: Builder
+# ==========================================
+FROM debian:bookworm-slim AS builder
+WORKDIR /app
+
+# Install Flutter dependencies
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    git \
+    curl \
+    unzip \
+    xz-utils \
+    libglu1-mesa \
+    clang \
+    cmake \
+    ninja-build \
+    pkg-config \
+    libgtk-3-dev \
+    liblzma-dev \
+    && rm -rf /var/lib/apt/lists/*
+
+# Install Flutter SDK
+ENV FLUTTER_VERSION=3.24.3
+ENV PATH="/flutter/bin:$PATH"
+RUN git clone --depth 1 --branch $FLUTTER_VERSION https://github.com/flutter/flutter.git /flutter && \
+    flutter precache --web && \
+    flutter config --enable-web
+
+# Copy pubspec files
+COPY pubspec.yaml pubspec.lock ./
+
+# Get dependencies
+RUN flutter pub get
+
+# Copy source code
+COPY . .
+
+# Build web (WASM + SKIA)
+RUN flutter build web --release --wasm --dart-define=API_BASE_URL=https://api.taskflow.xprad.com
+
+# ==========================================
+# Stage 2: Production (Nginx)
+# ==========================================
+FROM nginx:alpine AS runner
+WORKDIR /usr/share/nginx/html
+
+# Remove default nginx static assets
+RUN rm -rf ./*
+
+# Copy built web assets from builder
+COPY --from=builder /app/build/web .
+
+# Copy nginx configuration
+COPY nginx.conf /etc/nginx/conf.d/default.conf
+
+# Create health check endpoint
+RUN echo "healthy" > /usr/share/nginx/html/health
+
+# Expose port (internal only, Traefik routes to this)
+EXPOSE 80
+
+# Health check
+HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
+  CMD wget -q --spider http://localhost/health || exit 1
+
+# Start nginx
+CMD ["nginx", "-g", "daemon off;"]

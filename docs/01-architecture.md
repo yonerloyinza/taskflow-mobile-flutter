@@ -1,0 +1,28 @@
+# Arquitectura y Despliegue — taskflow-mobile-flutter
+
+- **Stack:** Flutter 3.24+ + Dart 3.5+ + Riverpod + Dio + Freezed + Drift + GoRouter + Flutter Hooks
+- **Targets:** Android (minSdk 21), iOS (iOS 13+), Web (WASM + CanvasKit/SKIA), Windows, macOS, Linux
+- **API Contract:** OpenAPI 3.1 compartido (`docs/openapi.yaml`) — tipos Dart generados (`openapi-generator` Flutter/Dio o manual `freezed` + `json_serializable`), consumiendo backends taskflow-api-* via `API_BASE_URL` (`--dart-define` / `flutter_dotenv`).
+- **Architecture:** Clean Architecture + Feature-First
+  - `lib/core/`: Config, DI, Networking, Database, Theme, Routing, Errors, Utils
+  - `lib/features/tasks/`: Domain (Entities, Repository, UseCases), Data (RepositoryImpl, DTOs, API, DB), Presentation (Pages, Widgets, Providers, State)
+  - `lib/app/`: `ProviderScope`, `MaterialApp.router`, `GoRouter`, `ThemeData`, `DriftDatabase`, `DioClient`
+- **State Management:** Riverpod 2.x — `AsyncValue<T>` para loading/error/data, `StateNotifierProvider` para mutaciones, `FutureProvider`/`StreamProvider` para queries, `Provider`/`AutoDispose` para deps. `ref.watch`/`ref.listen`/`ref.invalidate` para reactividad.
+- **Networking:** Dio + `retrofit.dart` — `@RestApi()`, `@GET/POST/PATCH/DELETE`, `@Query`/`@Path`/`@Body`, interceptors: `AuthInterceptor` (Bearer), `LoggingInterceptor` (pretty), `RetryInterceptor` (exponential backoff 3x), `ErrorInterceptor` (maps `ErrorResponse` → `AppException`).
+- **Persistence:** Drift — `@DataClassName`, `@Table`, `@Column`, `GeneratedDatabase`, `MigrationStrategy`, DAOs (`select`, `insert`, `update`, `delete`, `watch`), Repository impl con `localDataSource` + `remoteDataSource` + sync logic.
+- **Dependency Injection:** Riverpod — `ProviderScope` root, `core/providers.dart` (database, dio, repositories), `features/tasks/providers.dart` (useCases, viewModels), `app/providers.dart` (router, theme).
+- **Navigation:** GoRouter — `GoRouter(routes: [GoRoute(path: '/', builder: ...), GoRoute(path: '/tasks/:id', builder: ...)]`, `redirect` para auth guards, `routes.dart` tipado con `GoRouteData` (code-gen).
+- **Forms & Validation:** `formz` + `freezed` DTOs — `FormzInput` para cada campo, validación sincrónica + asíncrona, `Formz.validate()` en submit.
+- **Theming:** Material 3 + `flex_color_scheme` — `ThemeData.light/dark()`, `ColorScheme.fromSeed()`, `dynamicColor` (Android 12+), `ResponsiveBreakpoints` (mobile/tablet/desktop), `GoogleFonts` / `Typography`.
+- **Code Generation:** `build_runner watch` — `freezed` (sealed classes, copyWith, toJson/fromJson), `json_serializable` (DTOs), `retrofit` (client), `drift` (DB), `riverpod_generator` (`@riverpod`), `go_router_builder` (routes).
+- **Testing:** `flutter_test` + `mocktail` (mocks) + `patrol` (E2E) — Unit (UseCases, Repository), Widget (Pages, Widgets), Integration (Critical flows: CRUD Tasks, Offline sync).
+- **Build Strategy:**
+  - **Web (WASM):** VPS Docker build (`flutter build web --wasm` → nginx) + Traefik HTTPS
+  - **Android/iOS/Desktop:** **Local build required** (Flutter SDK 3.24+, Android SDK, Xcode 15+) **or** GitHub Actions / Codemagic (macOS runners for iOS)
+  - **Artifacts:** APK/AAB/IPA/MSIX/DMG/AppImage uploaded to stores/releases; not built on VPS
+- **CI/CD:** 
+  - **Web (WASM):** GitHub Actions → SSH to VPS → `docker compose up -d --build --no-deps mobile-flutter-web`
+  - **Android:** GitHub Actions (ubuntu-latest) / Codemagic → `flutter build appbundle` → Play Console
+  - **iOS:** GitHub Actions (macos-latest) / Codemagic → `flutter build ipa` → TestFlight
+  - **Desktop:** GitHub Actions → `flutter build windows/macos/linux` → GitHub Releases
+- **Prohibido:** Monorepos, Bloc/Cubit, GetX, Provider (legacy), `sqflite` raw, SDKs propietarios backend, Expo, Capacitor, KMP, React Native.

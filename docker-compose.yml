@@ -1,0 +1,28 @@
+services:
+  mobile-flutter-web:
+    build:
+      context: .
+      dockerfile: Dockerfile.web
+    container_name: taskflow-mobile-flutter-web
+    restart: unless-stopped
+    expose:
+      - "80"
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.mobile-flutter-web.rule=Host(`taskflow-mobile-flutter.xprad.com`)"
+      - "traefik.http.routers.mobile-flutter-web.entrypoints=websecure"
+      - "traefik.http.routers.mobile-flutter-web.tls.certresolver=lets-encrypt"
+      - "traefik.http.services.mobile-flutter-web.loadbalancer.server.port=80"
+      - "traefik.http.routers.mobile-flutter-web.middlewares=secHeaders@file"
+    healthcheck:
+      test: ["CMD", "wget", "-q", "--spider", "http://localhost/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 5s
+    networks:
+      - public
+
+networks:
+  public:
+    external: true
