@@ -13,9 +13,9 @@ _TaskDto _$TaskDtoFromJson(Map<String, dynamic> json) => _TaskDto(
   status: _statusFromJson(json['status']),
   priority: _priorityFromJson(json['priority']),
   assignee: json['assignee'] as String,
-  dueDate: DateTime.parse(json['dueDate'] as String),
-  createdAt: DateTime.parse(json['createdAt'] as String),
-  updatedAt: DateTime.parse(json['updatedAt'] as String),
+  dueDate: _dateTimeFromJson(json['dueDate']),
+  createdAt: _dateTimeFromJson(json['createdAt']),
+  updatedAt: _dateTimeFromJson(json['updatedAt']),
 );
 
 Map<String, dynamic> _$TaskDtoToJson(_TaskDto instance) => <String, dynamic>{
@@ -25,9 +25,9 @@ Map<String, dynamic> _$TaskDtoToJson(_TaskDto instance) => <String, dynamic>{
   'status': _statusToJson(instance.status),
   'priority': _priorityToJson(instance.priority),
   'assignee': instance.assignee,
-  'dueDate': instance.dueDate.toIso8601String(),
-  'createdAt': instance.createdAt.toIso8601String(),
-  'updatedAt': instance.updatedAt.toIso8601String(),
+  'dueDate': _dateTimeToJson(instance.dueDate),
+  'createdAt': _dateTimeToJson(instance.createdAt),
+  'updatedAt': _dateTimeToJson(instance.updatedAt),
 };
 
 _CreateTaskRequest _$CreateTaskRequestFromJson(Map<String, dynamic> json) =>
@@ -41,7 +41,7 @@ _CreateTaskRequest _$CreateTaskRequestFromJson(Map<String, dynamic> json) =>
           ? TaskPriority.media
           : _priorityFromJson(json['priority']),
       assignee: json['assignee'] as String,
-      dueDate: DateTime.parse(json['dueDate'] as String),
+      dueDate: _dateTimeFromJson(json['dueDate']),
     );
 
 Map<String, dynamic> _$CreateTaskRequestToJson(_CreateTaskRequest instance) =>
@@ -51,7 +51,7 @@ Map<String, dynamic> _$CreateTaskRequestToJson(_CreateTaskRequest instance) =>
       'status': _statusToJson(instance.status),
       'priority': _priorityToJson(instance.priority),
       'assignee': instance.assignee,
-      'dueDate': instance.dueDate.toIso8601String(),
+      'dueDate': _dateTimeToJson(instance.dueDate),
     };
 
 _UpdateTaskRequest _$UpdateTaskRequestFromJson(Map<String, dynamic> json) =>
@@ -61,9 +61,7 @@ _UpdateTaskRequest _$UpdateTaskRequestFromJson(Map<String, dynamic> json) =>
       status: _nullableStatusFromJson(json['status']),
       priority: _nullablePriorityFromJson(json['priority']),
       assignee: json['assignee'] as String?,
-      dueDate: json['dueDate'] == null
-          ? null
-          : DateTime.parse(json['dueDate'] as String),
+      dueDate: _nullableDateTimeFromJson(json['dueDate']),
     );
 
 Map<String, dynamic> _$UpdateTaskRequestToJson(_UpdateTaskRequest instance) =>
@@ -73,7 +71,7 @@ Map<String, dynamic> _$UpdateTaskRequestToJson(_UpdateTaskRequest instance) =>
       'status': _nullableStatusToJson(instance.status),
       'priority': _nullablePriorityToJson(instance.priority),
       'assignee': instance.assignee,
-      'dueDate': instance.dueDate?.toIso8601String(),
+      'dueDate': _nullableDateTimeToJson(instance.dueDate),
     };
 
 _PageMeta _$PageMetaFromJson(Map<String, dynamic> json) => _PageMeta(
@@ -108,7 +106,7 @@ _ErrorResponse _$ErrorResponseFromJson(Map<String, dynamic> json) =>
       statusCode: (json['statusCode'] as num).toInt(),
       error: json['error'] as String,
       message: json['message'],
-      timestamp: DateTime.parse(json['timestamp'] as String),
+      timestamp: _dateTimeFromJson(json['timestamp']),
       path: json['path'] as String,
     );
 
@@ -117,6 +115,6 @@ Map<String, dynamic> _$ErrorResponseToJson(_ErrorResponse instance) =>
       'statusCode': instance.statusCode,
       'error': instance.error,
       'message': instance.message,
-      'timestamp': instance.timestamp.toIso8601String(),
+      'timestamp': _dateTimeToJson(instance.timestamp),
       'path': instance.path,
     };

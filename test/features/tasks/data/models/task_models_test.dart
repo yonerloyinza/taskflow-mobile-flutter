@@ -61,6 +61,7 @@ void main() {
       expect(json['priority'], 'media');
       expect(json['title'], 'nueva');
       expect(json['assignee'], 'yonerloy');
+      expect((json['dueDate'] as String).endsWith('Z'), isTrue);
     });
   });
 

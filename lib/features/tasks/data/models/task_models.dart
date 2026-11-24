@@ -25,6 +25,16 @@ Object? _priorityToJson(TaskPriority priority) => priority.wire;
 
 Object? _nullablePriorityToJson(TaskPriority? priority) => priority?.wire;
 
+DateTime _dateTimeFromJson(Object? json) => DateTime.parse(json! as String);
+
+DateTime? _nullableDateTimeFromJson(Object? json) =>
+    json == null ? null : DateTime.parse(json as String);
+
+Object? _dateTimeToJson(DateTime value) => value.toUtc().toIso8601String();
+
+Object? _nullableDateTimeToJson(DateTime? value) =>
+    value?.toUtc().toIso8601String();
+
 @freezed
 abstract class TaskDto with _$TaskDto {
   const factory TaskDto({
@@ -36,8 +46,11 @@ abstract class TaskDto with _$TaskDto {
     @JsonKey(fromJson: _priorityFromJson, toJson: _priorityToJson)
     required TaskPriority priority,
     required String assignee,
+    @JsonKey(fromJson: _dateTimeFromJson, toJson: _dateTimeToJson)
     required DateTime dueDate,
+    @JsonKey(fromJson: _dateTimeFromJson, toJson: _dateTimeToJson)
     required DateTime createdAt,
+    @JsonKey(fromJson: _dateTimeFromJson, toJson: _dateTimeToJson)
     required DateTime updatedAt,
   }) = _TaskDto;
 
@@ -57,6 +70,7 @@ abstract class CreateTaskRequest with _$CreateTaskRequest {
     @JsonKey(fromJson: _priorityFromJson, toJson: _priorityToJson)
     TaskPriority priority,
     required String assignee,
+    @JsonKey(fromJson: _dateTimeFromJson, toJson: _dateTimeToJson)
     required DateTime dueDate,
   }) = _CreateTaskRequest;
 
@@ -77,6 +91,10 @@ abstract class UpdateTaskRequest with _$UpdateTaskRequest {
     )
     TaskPriority? priority,
     String? assignee,
+    @JsonKey(
+      fromJson: _nullableDateTimeFromJson,
+      toJson: _nullableDateTimeToJson,
+    )
     DateTime? dueDate,
   }) = _UpdateTaskRequest;
 
@@ -114,6 +132,7 @@ abstract class ErrorResponse with _$ErrorResponse {
     required int statusCode,
     required String error,
     required Object? message,
+    @JsonKey(fromJson: _dateTimeFromJson, toJson: _dateTimeToJson)
     required DateTime timestamp,
     required String path,
   }) = _ErrorResponse;
