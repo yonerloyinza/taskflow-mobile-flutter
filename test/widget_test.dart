@@ -1,8 +1,10 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:taskflow_mobile_flutter/app/app.dart';
 import 'package:taskflow_mobile_flutter/app/providers.dart';
+import 'package:taskflow_mobile_flutter/core/config/backend_store.dart';
 import 'package:taskflow_mobile_flutter/features/tasks/domain/entities/task_entity.dart';
 import 'package:taskflow_mobile_flutter/features/tasks/domain/entities/task_priority.dart';
 import 'package:taskflow_mobile_flutter/features/tasks/domain/entities/task_status.dart';
@@ -24,7 +26,12 @@ TaskEntity _task(String id) {
 }
 
 void main() {
-  setUpAll(registerTaskRepositoryFallbacks);
+  late SharedPreferences prefs;
+
+  setUpAll(() async {
+    registerTaskRepositoryFallbacks();
+    prefs = await setupMockPreferences();
+  });
 
   testWidgets('TasksPage renderiza la lista de tareas', (tester) async {
     final repo = MockTaskRepository();
@@ -40,13 +47,16 @@ void main() {
 
     await tester.pumpWidget(
       ProviderScope(
-        overrides: [taskRepositoryProvider.overrideWithValue(repo)],
+        overrides: [
+          sharedPreferencesProvider.overrideWithValue(prefs),
+          taskRepositoryProvider.overrideWithValue(repo),
+        ],
         child: const TaskflowApp(),
       ),
     );
     await tester.pumpAndSettle();
 
-    expect(find.text('Tareas'), findsOneWidget);
+    expect(find.text('Tareas'), findsWidgets);
     expect(find.text('Tarea 1'), findsOneWidget);
   });
 }

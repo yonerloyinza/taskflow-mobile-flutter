@@ -171,95 +171,100 @@ class _TaskFormState extends ConsumerState<_TaskForm> {
 
   @override
   Widget build(BuildContext context) {
-    return ListView(
+    return SingleChildScrollView(
       padding: const EdgeInsets.all(16),
-      children: [
-        if (_errorMessage != null)
-          Padding(
-            padding: const EdgeInsets.only(bottom: 12),
-            child: Text(
-              _errorMessage!,
-              style: TextStyle(color: Theme.of(context).colorScheme.error),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          if (_errorMessage != null)
+            Padding(
+              padding: const EdgeInsets.only(bottom: 12),
+              child: Text(
+                _errorMessage!,
+                style: TextStyle(color: Theme.of(context).colorScheme.error),
+              ),
+            ),
+          AppTextField(
+            label: 'Título',
+            controller: _title,
+            errorText: _titleInput.isPure ? null : _titleInput.error?.message,
+          ),
+          const SizedBox(height: 12),
+          AppTextField(
+            label: 'Descripción',
+            controller: _description,
+            maxLines: 3,
+            errorText: _descriptionInput.isPure
+                ? null
+                : _descriptionInput.error?.message,
+          ),
+          const SizedBox(height: 12),
+          AppTextField(
+            label: 'Asignado a',
+            controller: _assignee,
+            errorText: _assigneeInput.isPure
+                ? null
+                : _assigneeInput.error?.message,
+          ),
+          const SizedBox(height: 12),
+          DropdownButtonFormField<TaskStatus>(
+            initialValue: _status,
+            decoration: const InputDecoration(
+              labelText: 'Estado',
+              border: OutlineInputBorder(),
+            ),
+            items: [
+              for (final status in TaskStatus.values)
+                DropdownMenuItem(
+                  value: status,
+                  child: Text(_statusLabel(status)),
+                ),
+            ],
+            onChanged: (value) {
+              if (value != null) {
+                setState(() => _status = value);
+              }
+            },
+          ),
+          const SizedBox(height: 12),
+          DropdownButtonFormField<TaskPriority>(
+            initialValue: _priority,
+            decoration: const InputDecoration(
+              labelText: 'Prioridad',
+              border: OutlineInputBorder(),
+            ),
+            items: [
+              for (final priority in TaskPriority.values)
+                DropdownMenuItem(
+                  value: priority,
+                  child: Text(_priorityLabel(priority)),
+                ),
+            ],
+            onChanged: (value) {
+              if (value != null) {
+                setState(() => _priority = value);
+              }
+            },
+          ),
+          const SizedBox(height: 12),
+          Card(
+            child: ListTile(
+              leading: const Icon(Icons.event),
+              title: const Text('Fecha de vencimiento'),
+              subtitle: Text(_dueDate.toLocal().toString().split(' ').first),
+              trailing: const Icon(Icons.chevron_right),
+              onTap: _pickDate,
             ),
           ),
-        AppTextField(
-          label: 'Título',
-          controller: _title,
-          errorText: _titleInput.isPure ? null : _titleInput.error?.message,
-        ),
-        const SizedBox(height: 12),
-        AppTextField(
-          label: 'Descripción',
-          controller: _description,
-          maxLines: 3,
-          errorText: _descriptionInput.isPure
-              ? null
-              : _descriptionInput.error?.message,
-        ),
-        const SizedBox(height: 12),
-        AppTextField(
-          label: 'Asignado a',
-          controller: _assignee,
-          errorText: _assigneeInput.isPure
-              ? null
-              : _assigneeInput.error?.message,
-        ),
-        const SizedBox(height: 12),
-        DropdownButtonFormField<TaskStatus>(
-          initialValue: _status,
-          decoration: const InputDecoration(
-            labelText: 'Estado',
-            border: OutlineInputBorder(),
+          const SizedBox(height: 24),
+          AppButton(
+            label: _submitting
+                ? 'Guardando...'
+                : (_isEdit ? 'Guardar' : 'Crear'),
+            onPressed: _submitting ? () {} : _submit,
           ),
-          items: [
-            for (final status in TaskStatus.values)
-              DropdownMenuItem(
-                value: status,
-                child: Text(_statusLabel(status)),
-              ),
-          ],
-          onChanged: (value) {
-            if (value != null) {
-              setState(() => _status = value);
-            }
-          },
-        ),
-        const SizedBox(height: 12),
-        DropdownButtonFormField<TaskPriority>(
-          initialValue: _priority,
-          decoration: const InputDecoration(
-            labelText: 'Prioridad',
-            border: OutlineInputBorder(),
-          ),
-          items: [
-            for (final priority in TaskPriority.values)
-              DropdownMenuItem(
-                value: priority,
-                child: Text(_priorityLabel(priority)),
-              ),
-          ],
-          onChanged: (value) {
-            if (value != null) {
-              setState(() => _priority = value);
-            }
-          },
-        ),
-        const SizedBox(height: 12),
-        Card(
-          child: ListTile(
-            leading: const Icon(Icons.event),
-            title: const Text('Fecha de vencimiento'),
-            subtitle: Text(_dueDate.toLocal().toString().split(' ').first),
-            trailing: const Icon(Icons.chevron_right),
-            onTap: _pickDate,
-          ),
-        ),
-        const SizedBox(height: 24),
-        AppButton(
-          label: _submitting ? 'Guardando...' : (_isEdit ? 'Guardar' : 'Crear'),
-          onPressed: _submitting ? () {} : _submit,
-        ),
-      ],
+        ],
+      ),
     );
   }
 }

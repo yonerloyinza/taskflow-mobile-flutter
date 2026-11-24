@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../core/config/app_config.dart';
+import '../core/config/backend_store.dart';
 import '../core/config/env.dart';
 import '../core/database/app_database.dart';
 import '../core/database/connection/connection.dart';
@@ -16,10 +17,8 @@ import '../features/tasks/domain/repositories/task_repository.dart';
 import '../features/tasks/domain/usecases/task_usecases.dart';
 
 final appConfigProvider = Provider<AppConfig>((ref) {
-  return const AppConfig(
-    apiBaseUrl: Env.apiBaseUrl,
-    environment: Env.environment,
-  );
+  final backend = ref.watch(backendProvider);
+  return AppConfig(apiBaseUrl: backend.baseUrl, environment: Env.environment);
 });
 
 final dioProvider = Provider<Dio>((ref) {

@@ -2,6 +2,8 @@ import 'dart:async';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:taskflow_mobile_flutter/app/providers.dart';
+import 'package:taskflow_mobile_flutter/core/config/backend.dart';
+import 'package:taskflow_mobile_flutter/core/config/backend_store.dart';
 import 'package:taskflow_mobile_flutter/core/constants/app_constants.dart';
 import 'package:taskflow_mobile_flutter/features/tasks/domain/entities/task_entity.dart';
 import 'package:taskflow_mobile_flutter/features/tasks/domain/entities/task_priority.dart';
@@ -12,7 +14,13 @@ final statusFilterProvider = StateProvider<TaskStatus?>((ref) => null);
 final priorityFilterProvider = StateProvider<TaskPriority?>((ref) => null);
 
 class TasksNotifier extends StateNotifier<AsyncValue<List<TaskEntity>>> {
-  TasksNotifier(this._ref) : super(const AsyncValue.loading());
+  TasksNotifier(this._ref) : super(const AsyncValue.loading()) {
+    _ref.listen<BackendConfig>(backendProvider, (previous, next) {
+      if (previous?.baseUrl != next.baseUrl) {
+        unawaited(load());
+      }
+    });
+  }
 
   final Ref _ref;
   int _page = 1;

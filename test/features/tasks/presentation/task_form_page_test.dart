@@ -1,12 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:taskflow_mobile_flutter/app/app.dart';
 import 'package:taskflow_mobile_flutter/app/providers.dart';
+import 'package:taskflow_mobile_flutter/core/config/backend_store.dart';
 import 'package:taskflow_mobile_flutter/features/tasks/domain/entities/task_entity.dart';
 import 'package:taskflow_mobile_flutter/features/tasks/domain/entities/task_priority.dart';
 import 'package:taskflow_mobile_flutter/features/tasks/domain/entities/task_status.dart';
 import 'package:taskflow_mobile_flutter/features/tasks/domain/repositories/task_repository.dart';
+
+import '../../../helpers/mocks.dart';
 
 class _FakeRepo implements TaskRepository {
   TaskEntity? created;
@@ -74,13 +78,22 @@ class _FakeRepo implements TaskRepository {
 }
 
 void main() {
+  late SharedPreferences prefs;
+
+  setUpAll(() async {
+    prefs = await setupMockPreferences();
+  });
+
   testWidgets('crear envía assignee no vacío y muestra la tarea', (
     tester,
   ) async {
     final repo = _FakeRepo();
     await tester.pumpWidget(
       ProviderScope(
-        overrides: [taskRepositoryProvider.overrideWithValue(repo)],
+        overrides: [
+          sharedPreferencesProvider.overrideWithValue(prefs),
+          taskRepositoryProvider.overrideWithValue(repo),
+        ],
         child: const TaskflowApp(),
       ),
     );
@@ -90,6 +103,9 @@ void main() {
     await tester.pumpAndSettle();
 
     await tester.enterText(find.byType(TextField).first, 'Mi tarea');
+    await tester.pumpAndSettle();
+
+    await tester.ensureVisible(find.text('Crear'));
     await tester.pumpAndSettle();
 
     await tester.tap(find.text('Crear'));

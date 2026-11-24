@@ -1,11 +1,15 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:taskflow_mobile_flutter/app/providers.dart';
+import 'package:taskflow_mobile_flutter/core/config/backend_store.dart';
 import 'package:taskflow_mobile_flutter/features/tasks/domain/entities/task_entity.dart';
 import 'package:taskflow_mobile_flutter/features/tasks/domain/entities/task_priority.dart';
 import 'package:taskflow_mobile_flutter/features/tasks/domain/entities/task_status.dart';
 import 'package:taskflow_mobile_flutter/features/tasks/domain/repositories/task_repository.dart';
 import 'package:taskflow_mobile_flutter/features/tasks/presentation/providers/tasks_providers.dart';
+
+import '../../../helpers/mocks.dart';
 
 TaskEntity _task(String id, {TaskStatus status = TaskStatus.pendiente}) {
   return TaskEntity(
@@ -98,10 +102,18 @@ class _FakeTaskRepository implements TaskRepository {
 
 void main() {
   late ProviderContainer container;
+  late SharedPreferences prefs;
+
+  setUpAll(() async {
+    prefs = await setupMockPreferences();
+  });
 
   ProviderContainer buildContainer(_FakeTaskRepository repo) {
     final c = ProviderContainer(
-      overrides: [taskRepositoryProvider.overrideWithValue(repo)],
+      overrides: [
+        sharedPreferencesProvider.overrideWithValue(prefs),
+        taskRepositoryProvider.overrideWithValue(repo),
+      ],
     );
     addTearDown(c.dispose);
     return c;
